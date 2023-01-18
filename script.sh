@@ -1,0 +1,1 @@
+echo "Script before lambda entrypoint"
