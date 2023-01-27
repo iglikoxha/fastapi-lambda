@@ -1,12 +1,22 @@
-from fastapi import FastAPI
+import uvicorn
+from fastapi import FastAPI, Request
 from mangum import Mangum
-from starlette.requests import Request
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
-async def root():
+async def root(request: Request):
+    print(request.headers)
     return {"message": "Hello World"}
 
 
@@ -19,4 +29,8 @@ async def aws(request: Request):
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
 
-handler = Mangum(app, lifespan="off")
+
+handler = Mangum(app)
+
+if __name__ == '__main__':
+    uvicorn.run(app)
